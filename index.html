@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>gamelose — Главная</title>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: 'Segoe UI', Raleway, Helvetica, Arial, sans-serif;
+			color: #e8f0ff;
+			background: #0a0e1a;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+		a { color: #7fb2ff; text-decoration: none; }
+		a:hover { color: #c9dcff; }
+
+		.bar {
+			height: 4px;
+			background: linear-gradient(to right, #0022ff 0%, #00aaff 50%, #7ff0ff 100%);
+		}
+		header {
+			background: #0d1322;
+			border-bottom: 1px solid #1c2b4a;
+			padding: 20px 16px;
+			text-align: center;
+		}
+		.logo {
+			font-size: 44px;
+			font-weight: 900;
+			letter-spacing: 3px;
+			text-transform: uppercase;
+		}
+		.logo span { color: #1e7fff; }
+		.tagline { color: #7a8bb3; margin-top: 6px; font-size: 14px; }
+
+		.authbar { margin-top: 14px; display: flex; justify-content: center; gap: 10px; align-items: center; }
+		.authbtn {
+			padding: 8px 20px;
+			border-radius: 8px;
+			border: 1px solid #1e7fff;
+			background: transparent;
+			color: #7fb2ff;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: background 0.15s, color 0.15s;
+			font-family: inherit;
+		}
+		.authbtn:hover { background: #1e7fff; color: #fff; }
+		.authname { color: #c9dcff; font-weight: 700; }
+
+		.modal {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.6);
+			z-index: 100;
+			align-items: center;
+			justify-content: center;
+			padding: 16px;
+		}
+		.modal.show { display: flex; }
+		.modal-box {
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 12px;
+			padding: 26px;
+			width: 100%;
+			max-width: 400px;
+			position: relative;
+		}
+		.modal-box h3 { margin-bottom: 16px; color: #4da3ff; }
+		.modal-close {
+			position: absolute;
+			top: 12px;
+			right: 14px;
+			background: none;
+			border: none;
+			color: #7a8bb3;
+			font-size: 20px;
+			cursor: pointer;
+		}
+		#authMsg { font-size: 14px; color: #ff8b8b; margin-top: 8px; min-height: 18px; }
+		.authlink { font-size: 13px; margin-top: 6px; }
+
+		main {
+			flex: 1;
+			width: 100%;
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 30px 16px;
+		}
+		.page { display: none; animation: fade 0.25s ease; }
+		.page.active { display: block; }
+		@keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+		h1 { font-size: 34px; margin-bottom: 12px; }
+		h1 span { color: #1e7fff; }
+		h2 { font-size: 22px; margin: 26px 0 12px; color: #7fb2ff; }
+		p { line-height: 1.7; color: #aab7d4; margin-bottom: 12px; }
+
+		.hero {
+			background: linear-gradient(135deg, #101b33, #0d1322);
+			border: 1px solid #1c2b4a;
+			border-radius: 12px;
+			padding: 44px 36px;
+			margin-bottom: 30px;
+			text-align: center;
+		}
+		.hero p { font-size: 17px; color: #8b9cc0; }
+		.btn {
+			display: inline-block;
+			margin-top: 22px;
+			padding: 13px 32px;
+			border-radius: 8px;
+			font-size: 16px;
+			font-weight: 700;
+			background: linear-gradient(90deg, #0033ff, #00aaff);
+			color: #fff;
+			box-shadow: 0 0 20px rgba(0, 100, 255, 0.35);
+			transition: filter 0.15s;
+		}
+		.btn:hover { filter: brightness(1.2); color: #fff; }
+
+		.cards {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+			gap: 18px;
+		}
+		.card {
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 10px;
+			padding: 22px;
+		}
+		.card h3 { margin-bottom: 8px; color: #1e7fff; }
+		.card p { margin: 0; font-size: 14px; }
+
+		.list { list-style: none; }
+		.list li {
+			padding: 12px 14px;
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 8px;
+			margin-bottom: 10px;
+		}
+		.list li b { color: #1e7fff; }
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 10px;
+			overflow: hidden;
+		}
+		th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #1c2b4a; }
+		th { background: #101b33; color: #4da3ff; }
+		tr:last-child td { border-bottom: none; }
+
+		.faq details {
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 8px;
+			padding: 16px 18px;
+			margin-bottom: 10px;
+		}
+		.faq summary { cursor: pointer; font-weight: 600; margin-bottom: 6px; color: #d6e4ff; }
+		.faq details p { margin: 0; font-size: 14px; }
+
+		/* forum */
+		.forum-cat {
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 10px;
+			margin-bottom: 20px;
+			overflow: hidden;
+		}
+		.forum-cat h3 {
+			background: #101b33;
+			padding: 14px 18px;
+			font-size: 16px;
+			color: #4da3ff;
+			border-bottom: 1px solid #1c2b4a;
+		}
+		.thread {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			padding: 14px 18px;
+			border-bottom: 1px solid #16223d;
+		}
+		.thread:last-child { border-bottom: none; }
+		.thread .title { flex: 1; font-weight: 600; color: #d6e4ff; }
+		.thread .meta { color: #6b7da6; font-size: 13px; white-space: nowrap; }
+		.thread .replies { color: #7fb2ff; font-size: 13px; }
+
+		form {
+			background: #0e1527;
+			border: 1px solid #1c2b4a;
+			border-radius: 10px;
+			padding: 20px;
+			max-width: 480px;
+		}
+		form input, form textarea {
+			width: 100%;
+			padding: 11px 13px;
+			margin-bottom: 12px;
+			border: 1px solid #1c2b4a;
+			border-radius: 6px;
+			background: #101b33;
+			color: #e8f0ff;
+			font-family: inherit;
+			font-size: 14px;
+		}
+		form textarea { resize: vertical; min-height: 100px; }
+		form input:focus, form textarea:focus { outline: none; border-color: #1e7fff; }
+
+		/* bottom tabs */
+		nav {
+			position: sticky;
+			bottom: 0;
+			z-index: 10;
+			background: #0d1322;
+			border-top: 1px solid #1c2b4a;
+		}
+		.tabs {
+			max-width: 1000px;
+			margin: 0 auto;
+			display: flex;
+			justify-content: center;
+			gap: 6px;
+			padding: 10px 12px;
+			flex-wrap: wrap;
+		}
+		.tab {
+			padding: 10px 18px;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 600;
+			color: #7a8bb3;
+			transition: background 0.15s, color 0.15s;
+			user-select: none;
+			text-align: center;
+		}
+		.tab:hover { background: #16223d; color: #d6e4ff; }
+		.tab.active {
+			background: linear-gradient(90deg, #0033ff, #00aaff);
+			color: #fff;
+			box-shadow: 0 0 14px rgba(0, 100, 255, 0.35);
+		}
+
+		footer {
+			padding: 16px;
+			text-align: center;
+			color: #5a6b8f;
+			font-size: 13px;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+	<div id="jsErrors" style="display:none; position:fixed; top:0; left:0; right:0; background:#a33; color:#fff; padding:10px; z-index:9999; font-size:13px; white-space:pre-wrap;"></div>
+	<div class="bar"></div>
+	<header>
+		<a class="logo" href="#">game<span>lose</span></a>
+		<div class="tagline">всё для игры — честно и быстро</div>
+		<div id="authBar" class="authbar">
+			<div id="authLoggedOut">
+				<button class="authbtn" onclick="showAuth('login')">Войти</button>
+				<button class="authbtn" onclick="showAuth('signup')">Регистрация</button>
+			</div>
+			<div id="authLoggedIn" style="display:none;">
+				<span id="authName" class="authname"></span>
+				<button class="authbtn" onclick="signOut()">Выйти</button>
+			</div>
+		</div>
+	</header>
+
+	<main>
+		<section class="page active" id="home">
+			<div class="hero">
+				<h1>Добро пожаловать на <span>gamelose</span></h1>
+				<p>Мощный, стабильный и незаметный чит с полным набором функций. Обновления каждый месяц, поддержка 24/7.</p>
+				<a class="btn" href="#" data-goto="download">Скачать бесплатно</a>
+			</div>
+			<h2>Почему выбирают нас</h2>
+			<div class="cards">
+				<div class="card"><h3>Незаметность</h3><p>Низкий детект-риск благодаря собственному анти-читу и постоянным обновлениям.</p></div>
+				<div class="card"><h3>Простота</h3><p>Установка за 2 минуты. Понятный интерфейс без лишних настроек.</p></div>
+				<div class="card"><h3>Поддержка</h3><p>Ответы на вопросы и решение проблем в течение часа, 7 дней в неделю.</p></div>
+			</div>
+			<h2>Новости</h2>
+			<div class="cards">
+				<div class="card"><h3>v5.2 вышла</h3><p>Новый aimbot, улучшенный ESP и обновлённый анти-детект. <a href="#" data-goto="forum">Обсудить в форуме</a></p></div>
+				<div class="card"><h3>Форум открыт</h3><p>Задавайте вопросы и общайтесь с другими пользователями в разделе «Форум».</p></div>
+			</div>
+		</section>
+
+		<section class="page" id="download">
+			<h1>Скачать</h1>
+			<p>Выберите нужную версию. Все файлы проверены и подписаны.</p>
+			<table>
+				<tr><th>Версия</th><th>Поддержка</th><th>Статус</th><th></th></tr>
+				<tr><td>gamelose v5.2</td><td>Windows 10 / 11</td><td style="color:#4da3ff;">Стабильная</td><td><a class="btn" href="#" style="margin:0;padding:8px 18px;font-size:14px;">Скачать</a></td></tr>
+				<tr><td>gamelose v5.1</td><td>Windows 10 / 11</td><td style="color:#4da3ff;">Стабильная</td><td><a class="btn" href="#" style="margin:0;padding:8px 18px;font-size:14px;">Скачать</a></td></tr>
+				<tr><td>gamelose v5.0</td><td>Windows 10 / 11</td><td style="color:#ffb84d;">Бета</td><td><a class="btn" href="#" style="margin:0;padding:8px 18px;font-size:14px;">Скачать</a></td></tr>
+			</table>
+			<h2>Инструкция</h2>
+			<ul class="list">
+				<li><b>1.</b> Скачайте архив с сайта и распакуйте его.</li>
+				<li><b>2.</b> Запустите <b>setup.exe</b> от имени администратора.</li>
+				<li><b>3.</b> Укажите путь к папке с игрой.</li>
+				<li><b>4.</b> Запустите игру и нажмите <b>Insert</b>, чтобы открыть меню.</li>
+			</ul>
+		</section>
+
+		<section class="page" id="features">
+			<h1>Возможности</h1>
+			<p>Полный список функций текущей версии.</p>
+			<ul class="list">
+				<li><b>Aimbot</b> — прицеливание в голову, сглаживание, FOV, приоритеты целей.</li>
+				<li><b>ESP</b> — отрисовка игроков через стены: коробки, здоровье, оружие, дистанция.</li>
+				<li><b>Radar</b> — встроенный радар показывает всех противников.</li>
+				<li><b>Triggerbot</b> — автоматический выстрел при наведении на врага.</li>
+				<li><b>Misc</b> — бинд-панель, прыжки, настройки скорости.</li>
+				<li><b>Skin changer</b> — смена скинов оружия локально.</li>
+			</ul>
+		</section>
+
+		<section class="page" id="pricing">
+			<h1>Цены</h1>
+			<p>Оплата удобным для вас способом. Подписка активируется мгновенно.</p>
+			<table>
+				<tr><th>План</th><th>Срок</th><th>Цена</th><th>Детали</th></tr>
+				<tr><td>1 день</td><td>24 часа</td><td>150 ₽</td><td>Тест перед покупкой</td></tr>
+				<tr><td>1 месяц</td><td>30 дней</td><td>790 ₽</td><td>Все функции</td></tr>
+				<tr><td>3 месяца</td><td>90 дней</td><td>1 990 ₽</td><td>Все функции + скидка</td></tr>
+				<tr><td>Lifetime</td><td>Навсегда</td><td>4 990 ₽</td><td>Все будущие обновления</td></tr>
+			</table>
+		</section>
+
+		<section class="page" id="forum">
+			<h1>Форум</h1>
+			<p>Общайтесь, задавайте вопросы и делитесь опытом.</p>
+
+			<div id="forumAuthHint" style="display:none; margin-bottom:20px;" class="card">
+				<h3>Только для зарегистрированных</h3>
+				<p>Чтобы создавать темы и отвечать, <a href="#" onclick="showAuth('login');return false;">войдите</a> или <a href="#" onclick="showAuth('signup');return false;">зарегистрируйтесь</a>.</p>
+			</div>
+
+			<form id="topicForm" style="display:none; max-width:100%; margin-bottom:24px;">
+				<h3 style="color:#4da3ff; margin-bottom:12px;">Новая тема</h3>
+				<input type="text" id="topicTitle" placeholder="Заголовок темы" required />
+				<textarea id="topicBody" placeholder="Сообщение (необязательно)"></textarea>
+				<button class="btn" type="submit" style="border:none;cursor:pointer;">Создать тему</button>
+			</form>
+
+			<div id="topicsList"><p style="color:#7a8bb3;">Загрузка тем…</p></div>
+		</section>
+
+		<section class="page" id="faq">
+			<h1>Частые вопросы</h1>
+			<div class="faq">
+				<details>
+					<summary>Банят ли за использование?</summary>
+					<p>Мы используем собственный анти-детект и регулярно обновляем его под текущие системы. Полную гарантию от бана не даёт никто.</p>
+				</details>
+				<details>
+					<summary>Как оплатить?</summary>
+					<p>Принимаем криптовалюту, банковские карты и электронные кошельки. Ссылка для оплаты приходит после оформления заказа.</p>
+				</details>
+				<details>
+					<summary>Что если чит перестанет работать после обновления игры?</summary>
+					<p>Обычно обновление выходит в течение 24–48 часов. Подписчикам оно доступно бесплатно.</p>
+				</details>
+				<details>
+					<summary>Можно ли пользоваться на втором ПК?</summary>
+					<p>Нет, одна подписка привязана к одному устройству. При необходимости привязку можно сменить один раз в месяц.</p>
+				</details>
+			</div>
+		</section>
+	</main>
+
+	<nav>
+		<div class="tabs" id="tabs">
+			<div class="tab active" data-page="home">🏠 Главная</div>
+			<div class="tab" data-page="download">⬇ Скачать</div>
+			<div class="tab" data-page="features">⚙ Возможности</div>
+			<div class="tab" data-page="pricing">💰 Цены</div>
+			<div class="tab" data-page="forum">💬 Форум</div>
+			<div class="tab" data-page="faq">❓ FAQ</div>
+		</div>
+	</nav>
+
+	<footer>
+		<p>gamelose © 2026. Сайт не связан с разработчиками игр. Все права защищены.</p>
+	</footer>
+
+	<div class="modal" id="authModal">
+		<div class="modal-box">
+			<button class="modal-close" onclick="hideAuth()">✕</button>
+			<h3 id="authTitle">Вход</h3>
+			<form id="authForm">
+				<input type="email" id="authEmail" placeholder="Email" required />
+				<input type="text" id="authUsername" placeholder="Ник (только при регистрации)" />
+				<input type="password" id="authPassword" placeholder="Пароль (мин. 6 символов)" required />
+				<button class="btn" type="submit" style="border:none;cursor:pointer;width:100%;" id="authSubmit">Войти</button>
+			</form>
+			<div id="authMsg"></div>
+			<div class="authlink" id="authSwitch"></div>
+		</div>
+	</div>
+
+	<script>
+		// ----- Навигация (работает всегда, даже без Supabase) -----
+		function switchPage(page) {
+			document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+			document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === page));
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			if (page === 'forum' && typeof loadTopics === 'function') loadTopics();
+		}
+
+		document.getElementById('tabs').addEventListener('click', function (e) {
+			const tab = e.target.closest('.tab');
+			if (tab) switchPage(tab.dataset.page);
+		});
+		document.querySelectorAll('[data-goto]').forEach(a => {
+			a.addEventListener('click', function (e) { e.preventDefault(); switchPage(this.dataset.page || this.dataset.goto); });
+		});
+
+		// ----- Модалка входа/регистрации (не зависит от Supabase) -----
+		function showAuth(mode) {
+			window.__authMode = mode === 'signup' ? 'signup' : 'login';
+			document.getElementById('authTitle').textContent = mode === 'signup' ? 'Регистрация' : 'Вход';
+			document.getElementById('authSubmit').textContent = mode === 'signup' ? 'Зарегистрироваться' : 'Войти';
+			document.getElementById('authUsername').style.display = mode === 'signup' ? 'block' : 'none';
+			document.getElementById('authSwitch').innerHTML = mode === 'signup'
+				? 'Уже есть аккаунт? <a href="#" onclick="showAuth(\'login\');return false;">Войти</a>'
+				: 'Нет аккаунта? <a href="#" onclick="showAuth(\'signup\');return false;">Регистрация</a>';
+			document.getElementById('authMsg').textContent = '';
+			document.getElementById('authModal').classList.add('show');
+		}
+		function hideAuth() { document.getElementById('authModal').classList.remove('show'); }
+		function setAuthMode(mode) { showAuth(mode); }
+
+		window.onerror = function (msg, src, line) {
+			var b = document.getElementById('jsErrors');
+			if (b) { b.style.display = 'block'; b.textContent += msg + ' (строка ' + line + ')\n'; }
+		};
+	</script>
+
+	<script>
+		(function () {
+		// ===== НАСТРОЙКА SUPABASE =====
+		// 1. Зарегистрируйся на https://supabase.com и создай проект
+		// 2. Project Settings -> API -> URL и anon public key
+		// 3. Вставь их сюда в кавычки
+		const SUPABASE_URL = 'https://gkunmpsyuowufwgfvhch.supabase.co';
+		const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrdW5tcHN5dW93dWZ3Z2Z2aGNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNTkwNzAsImV4cCI6MjEwMjYzNTA3MH0.QtNO_47F5Bs8rBpdZ7F2qL6ckG-uhOy2i6HmOUZcPY4';
+
+		let sbClient = null;
+		try {
+			sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+		} catch (e) {
+			console.warn('Supabase не настроен:', e.message);
+		}
+		let currentUser = null;
+
+		// ----- Регистрация / вход -----
+		document.getElementById('authForm').addEventListener('submit', async function (e) {
+			e.preventDefault();
+			if (!sbClient) { alert('Supabase не настроен. Вставь ключи в index.html.'); return; }
+			const mode = window.__authMode || 'login';
+			const email = document.getElementById('authEmail').value.trim();
+			const password = document.getElementById('authPassword').value;
+			const username = document.getElementById('authUsername').value.trim();
+			const msg = document.getElementById('authMsg');
+			msg.textContent = '';
+
+			try {
+				if (mode === 'signup') {
+					if (!username) { msg.textContent = 'Введите ник.'; return; }
+					const { data, error } = await sbClient.auth.signUp({
+						email, password,
+						options: { data: { username } }
+					});
+					if (error) throw error;
+					if (data.session) {
+						hideAuth();
+						updateAuthUI();
+					} else {
+						msg.style.color = '#8bff8b';
+						msg.textContent = 'Регистрация успешна! Подтверди почту по ссылке из письма, затем войди.';
+					}
+				} else {
+					const { error } = await sbClient.auth.signInWithPassword({ email, password });
+					if (error) throw error;
+					hideAuth();
+					updateAuthUI();
+				}
+			} catch (err) {
+				msg.style.color = '#ff8b8b';
+				msg.textContent = 'Ошибка: ' + err.message;
+			}
+		});
+
+		async function signOut() {
+			if (!sbClient) return;
+			await sbClient.auth.signOut();
+			updateAuthUI();
+		}
+
+		async function updateAuthUI() {
+			const loggedOut = document.getElementById('authLoggedOut');
+			const loggedIn = document.getElementById('authLoggedIn');
+			if (!sbClient) {
+				currentUser = null;
+				loggedOut.style.display = 'flex';
+				loggedIn.style.display = 'none';
+				document.getElementById('topicForm').style.display = 'none';
+				document.getElementById('forumAuthHint').style.display = 'block';
+				return;
+			}
+			const { data: { user } } = await sbClient.auth.getUser();
+			currentUser = user;
+			if (user) {
+				const name = (user.user_metadata && user.user_metadata.username) || user.email;
+				document.getElementById('authName').textContent = '👤 ' + name;
+				loggedOut.style.display = 'none';
+				loggedIn.style.display = 'flex';
+				document.getElementById('topicForm').style.display = 'block';
+				document.getElementById('forumAuthHint').style.display = 'none';
+			} else {
+				loggedOut.style.display = 'flex';
+				loggedIn.style.display = 'none';
+				document.getElementById('topicForm').style.display = 'none';
+				document.getElementById('forumAuthHint').style.display = 'block';
+			}
+		}
+
+		// ----- Форум -----
+		function fmtDate(d) {
+			return new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+		}
+
+		async function loadTopics() {
+			const list = document.getElementById('topicsList');
+			if (!sbClient) { list.innerHTML = '<p style="color:#7a8bb3;">Форум включится после настройки Supabase (вставь ключи в index.html).</p>'; return; }
+			const { data, error } = await sbClient
+				.from('topics')
+				.select('*, replies(count)')
+				.order('created_at', { ascending: false });
+			if (error) { list.innerHTML = '<p style="color:#ff8b8b;">Ошибка загрузки: ' + error.message + '</p>'; return; }
+			if (!data.length) { list.innerHTML = '<p style="color:#7a8bb3;">Пока нет тем. Создай первую!</p>'; return; }
+			list.innerHTML = data.map(t => `
+				<div class="forum-cat">
+					<div class="thread">
+						<span class="title"><a href="#" data-topic="${t.id}">${escapeHtml(t.title)}</a></span>
+						<span class="replies">${t.replies[0].count} ответ.</span>
+						<span class="meta">${escapeHtml(t.author_name)} · ${fmtDate(t.created_at)}</span>
+					</div>
+					<div class="topic-body" id="topic-${t.id}" style="display:none; padding:16px 18px; border-top:1px solid #16223d;">
+						${t.body ? '<p style="white-space:pre-wrap;">' + escapeHtml(t.body) + '</p>' : ''}
+						<div class="reply-list" id="replies-${t.id}"></div>
+						<form class="reply-form" data-topic="${t.id}" ${currentUser ? '' : 'style="display:none;"'}>
+							<textarea placeholder="Ваш ответ…" style="min-height:60px;"></textarea>
+							<button class="btn" type="submit" style="margin:10px 0 0; padding:8px 18px; font-size:14px;">Ответить</button>
+						</form>
+						${currentUser ? '' : '<p style="font-size:13px;color:#7a8bb3;"><a href="#" onclick="showAuth(\'login\');return false;">Войдите</a>, чтобы ответить.</p>'}
+					</div>
+				</div>`).join('');
+
+			list.querySelectorAll('.thread a[data-topic]').forEach(a => {
+				a.addEventListener('click', function (e) {
+					e.preventDefault();
+					const box = document.getElementById('topic-' + this.dataset.topic);
+					const hidden = box.style.display === 'none';
+					box.style.display = hidden ? 'block' : 'none';
+					if (hidden) loadReplies(this.dataset.topic);
+				});
+			});
+
+			list.querySelectorAll('.reply-form').forEach(f => {
+				f.addEventListener('submit', async function (e) {
+					e.preventDefault();
+					const body = this.querySelector('textarea').value.trim();
+					if (!body) return;
+					const { error } = await sbClient.from('replies').insert({
+						topic_id: this.dataset.topic,
+						body,
+						author_id: currentUser.id,
+						author_name: currentUser.user_metadata.username
+					});
+					if (error) { alert('Ошибка: ' + error.message); return; }
+					this.querySelector('textarea').value = '';
+					loadReplies(this.dataset.topic);
+					loadTopics();
+				});
+			});
+		}
+
+		async function loadReplies(topicId) {
+			const box = document.getElementById('replies-' + topicId);
+			const { data, error } = await sbClient
+				.from('replies')
+				.select('*')
+				.eq('topic_id', topicId)
+				.order('created_at', { ascending: true });
+			if (error) { box.innerHTML = '<p style="color:#ff8b8b;">' + error.message + '</p>'; return; }
+			if (!data.length) { box.innerHTML = '<p style="color:#7a8bb3; font-size:13px;">Пока нет ответов.</p>'; return; }
+			box.innerHTML = data.map(r => `
+				<div style="padding:10px 0; border-bottom:1px solid #16223d;">
+					<b style="color:#4da3ff;">${escapeHtml(r.author_name)}</b>
+					<span style="color:#6b7da6; font-size:12px;"> · ${fmtDate(r.created_at)}</span>
+					<p style="margin-top:6px; font-size:14px; white-space:pre-wrap;">${escapeHtml(r.body)}</p>
+				</div>`).join('');
+		}
+
+		document.getElementById('topicForm').addEventListener('submit', async function (e) {
+			e.preventDefault();
+			const title = document.getElementById('topicTitle').value.trim();
+			const body = document.getElementById('topicBody').value.trim();
+			if (!title || !currentUser || !sbClient) return;
+			const { error } = await sbClient.from('topics').insert({
+				title,
+				body,
+				author_id: currentUser.id,
+				author_name: currentUser.user_metadata.username
+			});
+			if (error) { alert('Ошибка: ' + error.message); return; }
+			this.reset();
+			loadTopics();
+		});
+
+		function escapeHtml(s) {
+			return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+		}
+
+		document.addEventListener('DOMContentLoaded', updateAuthUI);
+		})();
+	</script>
+</body>
+</html>
